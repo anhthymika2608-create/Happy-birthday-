@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>A Special Birthday Wish for Quỳnh Phong ✨</title>
+
+  <!-- Editorial Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Alex+Brush&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-cream: #fbf8f5;
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --envelope-front: #e9ded5;
+      --envelope-back: #dccdc2;
+      --envelope-flap: #dfd0c4;
+      --gold-primary: #c5a059;
+      --gold-light: #dfc288;
+      --gold-dark: #997736;
+      --text-main: #2b2826;
+      --text-muted: #5e5854;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 20%, #ffffff 0%, #f7f2ec 45%, #ede4da 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      color: var(--text-main);
+      padding: 1.5rem 1rem;
+      position: relative;
+    }
+
+    /* Ambient background bokeh */
+    .ambient-star {
+      position: fixed;
+      pointer-events: none;
+      font-size: 1.2rem;
+      color: var(--gold-light);
+      opacity: 0.35;
+      animation: ambientDrift 14s infinite alternate ease-in-out;
+      z-index: 0;
+    }
+    @keyframes ambientDrift {
+      0% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+      50% { opacity: 0.6; }
+      100% { transform: translateY(-35px) rotate(25deg); opacity: 0.2; }
+    }
+
+    /* Music Control Pill */
+    .music-bar {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 100;
+    }
+    .music-pill {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(197, 160, 89, 0.45);
+      border-radius: 40px;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+    }
+
+    /* -------------------------------------------
+       3D ENVELOPE STAGE (Responsive for Phones)
+    ------------------------------------------- */
+    .envelope-stage {
+      perspective: 1200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 20;
+      transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .envelope-container {
+      position: relative;
+      width: 350px;
+      height: 235px;
+      background: var(--envelope-back);
+      border-radius: 12px;
+      box-shadow: 0 25px 60px rgba(78, 64, 53, 0.22);
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.4s ease;
+    }
+
+    /* 3D Flap */
+    .flap-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 175px solid transparent;
+      border-right: 175px solid transparent;
+      border-top: 125px solid var(--envelope-flap);
+      transform-origin: top center;
+      transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 5;
+    }
+
+    /* Envelope Pocket folds */
+    .envelope-pocket-left {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-top: 118px solid transparent;
+      border-bottom: 117px solid transparent;
+      border-left: 175px solid #e3d5c9;
+      border-bottom-left-radius: 12px;
+      z-index: 3;
+    }
+    .envelope-pocket-right {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-top: 118px solid transparent;
+      border-bottom: 117px solid transparent;
+      border-right: 175px solid #dfd0c3;
+      border-bottom-right-radius: 12px;
+      z-index: 3;
+    }
+    .envelope-pocket-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 175px solid transparent;
+      border-right: 175px solid transparent;
+      border-bottom: 125px solid #d7c5b7;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      z-index: 4;
+    }
+
+    /* Wax Seal */
+    .wax-seal {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 64px;
+      height: 64px;
+      background: radial-gradient(circle at 35% 35%, #ffd984, var(--gold-primary) 65%, var(--gold-dark) 100%);
+      border-radius: 50%;
+      box-shadow: 0 8px 20px rgba(153, 119, 54, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 6;
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+      border: 1px solid rgba(255, 235, 179, 0.4);
+    }
+    .wax-seal-inner {
+      width: 48px;
+      height: 48px;
+      border: 1.5px dashed rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #fff;
+    }
+
+    .peeking-letter {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 310px;
+      height: 195px;
+      background: #fffdfa;
+      border-radius: 6px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 18px;
+      transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .peeking-letter span {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--gold-dark);
+      font-size: 1.1rem;
+    }
+
+    .click-prompt {
+      margin-top: 1.6rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      padding: 0.6rem 1.4rem;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+      animation: subtlePulse 2s infinite ease-in-out;
+    }
+    @keyframes subtlePulse {
+      0%, 100% { transform: translateY(0); opacity: 0.85; }
+      50% { transform: translateY(-3px); opacity: 1; border-color: var(--gold-primary); }
+    }
+
+    /* -------------------------------------------
+       ELEVATED LUXURY CARD
+    ------------------------------------------- */
+    .card-wrapper {
+      max-width: 620px;
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(223, 194, 136, 0.5);
+      border-radius: 20px;
+      padding: 2.8rem 2.2rem;
+      box-shadow: 0 30px 70px rgba(65, 52, 42, 0.14);
+      position: relative;
+      z-index: 30;
+      opacity: 0;
+      transform: translateY(50px) scale(0.95);
+      transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .card-wrapper.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .card-inner-border {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-style: italic;
+      color: var(--text-main);
+      margin-bottom: 0.2rem;
+      line-height: 1.2;
+    }
+
+    .recipient-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #7a5a22;
+      background: linear-gradient(135deg, #a4782e 0%, #d4af37 50%, #825b18 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Cake */
+    .cake-container {
+      position: relative;
+      margin: 0.4rem 0 1.6rem;
+      cursor: pointer;
+    }
+    .warm-glow {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      width: 150px;
+      height: 150px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255, 220, 130, 0.55) 0%, rgba(255, 235, 180, 0.15) 55%, transparent 70%);
+      border-radius: 50%;
+      animation: auraBreathe 2.5s infinite ease-in-out alternate;
+      pointer-events: none;
+    }
+    @keyframes auraBreathe {
+      0% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.6; }
+      100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.95; }
+    }
+
+    .flame-element {
+      transform-origin: center bottom;
+      animation: flameWaver 1.6s ease-in-out infinite alternate;
+      transition: opacity 0.5s ease;
+    }
+    @keyframes flameWaver {
+      0% { transform: scale(1) rotate(-1.5deg); }
+      50% { transform: scale(1.06, 1.08) rotate(2deg); }
+      100% { transform: scale(0.96) rotate(-0.8deg); }
+    }
+    .flame-extinguished {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+
+    /* Letter Body */
+    .message-container {
+      background: rgba(253, 250, 246, 0.85);
+      border-left: 3px solid var(--gold-primary);
+      border-radius: 6px;
+      padding: 1.6rem 1.8rem;
+      text-align: left;
+      font-size: 1.02rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 1.8rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    }
+    .message-container p {
+      margin-bottom: 1rem;
+    }
+    .message-container p:last-child {
+      margin-bottom: 0;
+    }
+    .salutation {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--text-main);
+      font-style: italic;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    /* Signature */
+    .signature-block {
+      text-align: right;
+      margin-top: 1.2rem;
+    }
+    .signature-closing {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-style: italic;
+      display: block;
+    }
+    .teacher-signature {
+      font-family: 'Alex Brush', cursive;
+      font-size: 2.3rem;
+      color: var(--gold-dark);
+      display: inline-block;
+      margin-top: 0.1rem;
+    }
+
+    /* Action Buttons */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      justify-content: center;
+      z-index: 5;
+    }
+    .btn-luxury {
+      background: linear-gradient(135deg, #d4af37 0%, #b88a3b 100%);
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 1.8rem;
+      border-radius: 40px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(184, 138, 59, 0.3);
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-subtle {
+      background: transparent;
+      border: 1px solid rgba(197, 160, 89, 0.6);
+      color: var(--gold-dark);
+      box-shadow: none;
+    }
+
+    .hidden {
+      display: none !important;
+      opacity: 0;
+    }
+
+    /* Mobile Fine-tuning */
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem 0.8rem;
+      }
+      .envelope-container {
+        width: 300px;
+        height: 200px;
+      }
+      .flap-top {
+        border-left-width: 150px;
+        border-right-width: 150px;
+        border-top-width: 110px;
+      }
+      .envelope-pocket-left, .envelope-pocket-right {
+        border-top-width: 100px;
+        border-bottom-width: 100px;
+        border-left-width: 150px;
+        border-right-width: 150px;
+      }
+      .envelope-pocket-bottom {
+        border-left-width: 150px;
+        border-right-width: 150px;
+        border-bottom-width: 110px;
+      }
+      .wax-seal {
+        top: 85px;
+        width: 56px;
+        height: 56px;
+      }
+      .peeking-letter {
+        width: 260px;
+        height: 165px;
+        left: 20px;
+      }
+      .card-wrapper {
+        padding: 2.2rem 1.2rem;
+      }
+      .card-heading {
+        font-size: 2rem;
+      }
+      .recipient-name {
+        font-size: 1.9rem;
+      }
+      .message-container {
+        padding: 1.2rem;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+      .btn-luxury {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Stars -->
+  <div class="ambient-star" style="top: 8%; left: 8%;">✦</div>
+  <div class="ambient-star" style="top: 15%; right: 10%; animation-duration: 18s;">✧</div>
+  <div class="ambient-star" style="bottom: 12%; left: 10%; animation-duration: 16s;">✦</div>
+  <div class="ambient-star" style="bottom: 18%; right: 8%; animation-duration: 20s;">✧</div>
+
+  <!-- Music Pill Control -->
+  <div class="music-bar">
+    <button class="music-pill" id="musicPill" onclick="toggleAudio()">
+      <span id="musicSymbol">🎼</span>
+      <span id="musicStatus">Melody Off</span>
+    </button>
+  </div>
+
+  <!-- Stage: 3D Envelope -->
+  <div class="envelope-stage" id="envelopeStage">
+    <div class="envelope-container" id="envelopeContainer" onclick="openSurpriseSequence()">
+      
+      <!-- Peeking Card inside -->
+      <div class="peeking-letter" id="peekingLetter">
+        <span>To: Đinh Ngọc Quỳnh Phong</span>
+      </div>
+
+      <!-- Flap Top -->
+      <div class="flap-top" id="flapTop"></div>
+
+      <!-- Pocket folds -->
+      <div class="envelope-pocket-left"></div>
+      <div class="envelope-pocket-right"></div>
+      <div class="envelope-pocket-bottom"></div>
+
+      <!-- Wax Seal -->
+      <div class="wax-seal" id="waxSeal">
+        <div class="wax-seal-inner">QP</div>
+      </div>
+    </div>
+
+    <div class="click-prompt">✦ Tap Wax Seal to Open ✦</div>
+  </div>
+
+  <!-- Luxury Card Section -->
+  <div class="card-wrapper hidden" id="cardWrapper">
+    <div class="card-inner-border"></div>
+
+    <h1 class="card-heading">Celebrating You</h1>
+    <h2 class="recipient-name">Đinh Ngọc Quỳnh Phong</h2>
+
+    <!-- Cake Illustration -->
+    <div class="cake-container" onclick="toggleFlame()" title="Click to blow out / relight candle">
+      <div class="warm-glow" id="candleAura"></div>
+      <svg width="140" height="130" viewBox="0 0 160 145" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="80" cy="132" rx="65" ry="8" fill="#eae3db"/>
+        <rect x="28" y="86" width="104" height="42" rx="8" fill="#f4ece4"/>
+        <line x1="28" y1="108" x2="132" y2="108" stroke="#dfc288" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <path d="M28 92 C38 96, 46 88, 56 94 C66 98, 74 90, 84 94 C94 98, 102 90, 112 94 C122 98, 128 92, 132 92 L132 86 L28 86 Z" fill="#ffffff"/>
+        <rect x="46" y="52" width="68" height="34" rx="6" fill="#e8eee9"/>
+        <path d="M46 58 C52 63, 58 56, 64 60 C70 64, 76 57, 82 61 C88 65, 94 58, 100 62 C106 65, 110 59, 114 59 L114 52 L46 52 Z" fill="#ffffff"/>
+        <rect x="77" y="28" width="6" height="24" rx="2" fill="#c5a059"/>
+        <line x1="80" y1="28" x2="80" y2="20" stroke="#3d3732" stroke-width="1.8"/>
+        <g id="cakeFlame" class="flame-element">
+          <ellipse cx="80" cy="14" rx="6.5" ry="11" fill="#f8b63e"/>
+          <ellipse cx="80" cy="15" rx="3.5" ry="6.5" fill="#fff5d0"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Letter Body (Original exact content) -->
+    <div class="message-container">
+      <span class="salutation">Dearest Quỳnh Phong,</span>
+
+      <p>
+        Reflecting on your path from a remarkable, bright student to an exceptional, dedicated colleague fills my heart with immense pride.
+      </p>
+
+      <p>
+        I want to express my deepest and most sincere gratitude for everything you have done for me. Your relentless support, your patience, and your radiant energy have been a tremendous source of encouragement. Having you by my side as a trusted companion is a gift I cherish dearly.
+      </p>
+
+      <p>
+        Wishing you the happiest of birthdays! I love seeing your passion and dedication shine every single day. You deserve the best, today and always!
+      </p>
+
+      <div class="signature-block">
+        <span class="signature-closing">With heartfelt gratitude and love,</span>
+        <span class="teacher-signature">Ms. Trang</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="btn-group">
+      <button class="btn-luxury" onclick="handleCandleBlow()">
+        <span id="blowIcon">🕯️</span>
+        <span id="blowText">Make a Wish & Blow Candle</span>
+      </button>
+      <button class="btn-luxury btn-subtle" onclick="triggerGrandCelebration()">
+        <span>✨</span> Champagne Confetti
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* ----------------------------------------------------
+       Harmonic Music Synthesizer (Acoustic Chime Arpeggios)
+    ---------------------------------------------------- */
+    class HarmonicSynthesizer {
+      constructor() {
+        this.ctx = null;
+        this.isPlaying = false;
+        this.timeoutId = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playPluck(freq, time, duration = 1.4, vol = 0.16) {
+        if (!this.isPlaying) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, time);
+
+        gain.gain.setValueAtTime(0, time);
+        gain.gain.linearRampToValueAtTime(vol, time + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(time);
+        osc.stop(time + duration);
+      }
+
+      playWarmPad(chordFreqs, time, duration = 3.2) {
+        if (!this.isPlaying) return;
+        chordFreqs.forEach(freq => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, time);
+
+          gain.gain.setValueAtTime(0, time);
+          gain.gain.linearRampToValueAtTime(0.04, time + 0.5);
+          gain.gain.linearRampToValueAtTime(0.0001, time + duration);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(time);
+          osc.stop(time + duration);
+        });
+      }
+
+      startMusic() {
+        this.init();
+        this.isPlaying = true;
+
+        const notes = {
+          F3: 174.61, A3: 220.00, C4: 261.63, D4: 293.66, E4: 329.63,
+          F4: 349.23, G4: 392.00, A4: 440.00, Bb4: 466.16, C5: 523.25, D5: 587.33
+        };
+
+        const now = this.ctx.currentTime + 0.1;
+        
+        // Phrase 1: F Major
+        this.playWarmPad([notes.F3, notes.A3, notes.C4], now, 3.5);
+        this.playPluck(notes.C4, now + 0.0);
+        this.playPluck(notes.F4, now + 0.35);
+        this.playPluck(notes.A4, now + 0.7);
+        this.playPluck(notes.C5, now + 1.1);
+        this.playPluck(notes.A4, now + 1.6);
+        this.playPluck(notes.F4, now + 2.1);
+
+        // Phrase 2: C Major / E
+        this.playWarmPad([notes.A3, notes.C4, notes.E4], now + 3.0, 3.5);
+        this.playPluck(notes.G4, now + 3.0);
+        this.playPluck(notes.C5, now + 3.4);
+        this.playPluck(notes.E4, now + 3.8);
+        this.playPluck(notes.G4, now + 4.3);
+        this.playPluck(notes.D5, now + 4.9);
+        this.playPluck(notes.C5, now + 5.4);
+
+        // Phrase 3: D minor & Bb Major
+        this.playWarmPad([notes.Bb4, notes.D4, notes.F4], now + 6.0, 3.5);
+        this.playPluck(notes.D4, now + 6.0);
+        this.playPluck(notes.F4, now + 6.35);
+        this.playPluck(notes.Bb4, now + 6.7);
+        this.playPluck(notes.D5, now + 7.2);
+        this.playPluck(notes.C5, now + 7.7);
+        this.playPluck(notes.A4, now + 8.2);
+        this.playPluck(notes.F4, now + 8.8);
+
+        this.timeoutId = setTimeout(() => {
+          if (this.isPlaying) this.startMusic();
+        }, 9500);
+      }
+
+      stopMusic() {
+        this.isPlaying = false;
+        if (this.timeoutId) clearTimeout(this.timeoutId);
+      }
+    }
+
+    const musicPlayer = new HarmonicSynthesizer();
+    let isMusicActive = false;
+
+    function toggleAudio(forcePlay = false) {
+      const musicPill = document.getElementById('musicPill');
+      const musicSymbol = document.getElementById('musicSymbol');
+      const musicStatus = document.getElementById('musicStatus');
+
+      if (!isMusicActive || forcePlay) {
+        musicPlayer.startMusic();
+        isMusicActive = true;
+        musicSymbol.innerText = "✨";
+        musicStatus.innerText = "Playing Melody";
+        musicPill.style.borderColor = "var(--gold-primary)";
+        musicPill.style.color = "var(--gold-dark)";
+      } else {
+        musicPlayer.stopMusic();
+        isMusicActive = false;
+        musicSymbol.innerText = "🎼";
+        musicStatus.innerText = "Melody Off";
+        musicPill.style.borderColor = "rgba(197, 160, 89, 0.45)";
+        musicPill.style.color = "var(--text-main)";
+      }
+    }
+
+    /* ----------------------------------------------------
+       Opening Sequence
+    ---------------------------------------------------- */
+    let openingStarted = false;
+
+    function openSurpriseSequence() {
+      if (openingStarted) return;
+      openingStarted = true;
+
+      const waxSeal = document.getElementById('waxSeal');
+      const flapTop = document.getElementById('flapTop');
+      const peekingLetter = document.getElementById('peekingLetter');
+      const envelopeStage = document.getElementById('envelopeStage');
+      const cardWrapper = document.getElementById('cardWrapper');
+
+      toggleAudio(true);
+
+      waxSeal.style.transform = 'translate(-50%, -50%) scale(1.35) rotate(15deg)';
+      confetti({
+        particleCount: 30,
+        spread: 45,
+        origin: { y: 0.6 },
+        colors: ['#c5a059', '#e8caa4', '#ffffff']
+      });
+
+      setTimeout(() => {
+        waxSeal.style.opacity = '0';
+        waxSeal.style.transform = 'translate(-50%, -80%) scale(0.6)';
+        
+        flapTop.style.transform = 'rotateX(180deg)';
+        flapTop.style.zIndex = '1';
+
+        setTimeout(() => {
+          peekingLetter.style.transform = 'translateY(-120px)';
+          triggerGrandCelebration();
+
+          setTimeout(() => {
+            envelopeStage.style.opacity = '0';
+            envelopeStage.style.transform = 'scale(0.85)';
+
+            setTimeout(() => {
+              envelopeStage.classList.add('hidden');
+              cardWrapper.classList.remove('hidden');
+
+              requestAnimationFrame(() => {
+                cardWrapper.classList.add('active');
+              });
+            }, 500);
+          }, 600);
+        }, 400);
+      }, 350);
+    }
+
+    /* ----------------------------------------------------
+       Confetti Burst
+    ---------------------------------------------------- */
+    function triggerGrandCelebration() {
+      const colors = ['#d4af37', '#e8d5b5', '#d8a49b', '#94a395', '#ffffff'];
+
+      confetti({
+        particleCount: 80,
+        angle: 60,
+        spread: 65,
+        origin: { x: 0.1, y: 0.75 },
+        colors: colors
+      });
+
+      confetti({
+        particleCount: 80,
+        angle: 120,
+        spread: 65,
+        origin: { x: 0.9, y: 0.75 },
+        colors: colors
+      });
+
+      setTimeout(() => {
+        confetti({
+          particleCount: 60,
+          spread: 90,
+          origin: { y: 0.45 },
+          scalar: 1.1,
+          colors: ['#c5a059', '#ffd984', '#fce4ec']
+        });
+      }, 250);
+    }
+
+    /* ----------------------------------------------------
+       Candle Toggle
+    ---------------------------------------------------- */
+    let flameActive = true;
+
+    function toggleFlame() {
+      const flame = document.getElementById('cakeFlame');
+      const aura = document.getElementById('candleAura');
+      const blowText = document.getElementById('blowText');
+      const blowIcon = document.getElementById('blowIcon');
+
+      if (flameActive) {
+        flame.classList.add('flame-extinguished');
+        aura.style.opacity = '0';
+        blowText.innerText = "Relight Candle";
+        blowIcon.innerText = "✨";
+        flameActive = false;
+
+        confetti({
+          particleCount: 40,
+          spread: 50,
+          origin: { y: 0.55 },
+          colors: ['#dfc288', '#fff', '#ffd700']
+        });
+      } else {
+        flame.classList.remove('flame-extinguished');
+        aura.style.opacity = '1';
+        blowText.innerText = "Make a Wish & Blow Candle";
+        blowIcon.innerText = "🕯️";
+        flameActive = true;
+      }
+    }
+
+    function handleCandleBlow() {
+      toggleFlame();
+    }
+  </script>
+</body>
+</html>
